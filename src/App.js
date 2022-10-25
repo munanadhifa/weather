@@ -1,6 +1,12 @@
-import { MagnifyingGlassIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  MapPinIcon,
+  SunIcon,
+} from "@heroicons/react/24/outline";
+import { WiThermometer, WiHumidity, WiStrongWind } from "weather-icons-react";
 import axios from "axios";
 import { useState } from "react";
+import moment from "moment";
 
 const App = () => {
   const [data, setData] = useState({});
@@ -49,12 +55,18 @@ const App = () => {
 
           <div className="mt-5">
             <div className="city_name">
-              <p className="text-white text-3xl place-content-center flex">
-                <MapPinIcon
-                  className="mt-2 mr-3 h-6 w-6 text-white"
-                  aria-hidden="true"
-                />
-                {data.name}
+              {data.name !== "" && (
+                <p className="text-white text-3xl flex">
+                  <MapPinIcon
+                    className="mt-2 mr-3 h-6 w-6 text-white"
+                    aria-hidden="true"
+                  />
+                  {data.name}
+                </p>
+              )}
+
+              <p className="text-white text-lg mt-2">
+                {moment().format("dddd")} {moment().format("LL")}
               </p>
             </div>
 
@@ -64,11 +76,75 @@ const App = () => {
             >
               <img
                 alt="weather"
-                className="w-23 h-23"
+                className="w-20"
                 src={`http://openweathermap.org/img/wn/${
                   data.weather && data.weather[0].icon
                 }.png`}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null; // prevents looping
+                  currentTarget.src =
+                    "http://openweathermap.org/img/wn/undefined.png";
+                }}
               />
+              <div className="flex flex-row inline-flex">
+                {data.main ? (
+                  <p className="text-white text-6xl">
+                    {data.main.temp.toFixed()}°C
+                  </p>
+                ) : null}
+                <div className="grid ml-10">
+                  <div className="feels_like inline-flex text-white">
+                    <WiThermometer size={24} color="#FFFFFF" />
+                    {data.main ? (
+                      <p className="text-sm">
+                        Feels Like : {data.main.feels_like.toFixed()}°
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="humidity inline-flex text-white">
+                    <WiHumidity size={24} color="#FFFFFF" />
+                    {data.main ? (
+                      <p className="text-sm">
+                        Humidity : {data.main.humidity.toFixed()}%
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="wind inline-flex text-white">
+                    <WiStrongWind size={24} color="#FFFFFF" />
+                    {data.wind ? (
+                      <p className="text-sm">
+                        wind : {data.wind.speed.toFixed()} km/H
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-white text-lg mt-1">
+                {data.weather && data.weather[0].main}
+              </p>
+
+              <div className="inline-flex mt-4 ">
+                <SunIcon
+                  className="mt-1 mr-1 h-4 w-4 text-white"
+                  aria-hidden="true"
+                />
+                {data.main ? (
+                  <p className="text-white text-base">
+                    High : {data.main.temp_max.toFixed()}°C
+                  </p>
+                ) : null}
+                <p className="text-white mx-3">|</p>
+                <SunIcon
+                  className="mt-1 mr-1 h-4 w-4 text-white"
+                  aria-hidden="true"
+                />
+                {data.main ? (
+                  <p className="text-white text-base">
+                    Low : {data.main.temp_min.toFixed()}°C
+                  </p>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
