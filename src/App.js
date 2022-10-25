@@ -23,6 +23,10 @@ const App = () => {
       setLocation("");
     }
   };
+  // useEffect(() => {
+  //   searchLocation();
+  // });
+
   return (
     <div>
       <h2 className="text-3xl font-bold tracking-tight pt-2 text-center">
